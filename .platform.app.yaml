@@ -9,24 +9,43 @@ name: guetbook
 # to find the supported versions for the 'php' type.
 type: 'php:8.3'
 
+
+dependencies:
+    php:
+        composer/composer: "^2"
+
+variables:
+    php:
+        opcache.preload: config/preload.php
+build:
+    flavor: none
+
+
 # The following block defines a single writable directory, 'web/uploads'
 # The 'source' specifies where the writable mount is. The 'local' source
 # indicates that the mount point will point to a local directory on the
 # application container. The 'source_path' specifies the subdirectory
 # from within the source that the mount should point at. 
 mounts:
-  'web/uploads':
-    source: local
-    source_path: uploads
+    "/var": { source: local, source_path: var }
+    "/data": { source: local, source_path: "data" }
 
 # The size of the persistent disk of the application (in MB).
 disk: 2048
 
 hooks:
     build: |
-      set -e
+        set -x -e
+
+        curl -fs https://get.symfony.com/cloud/configurator | bash
+        
+        NODE_VERSION=18 symfony-build
+
     deploy: |
-      set -e
+        set -x -e
+
+        symfony-deploy
+
 
 web:
   locations: 
