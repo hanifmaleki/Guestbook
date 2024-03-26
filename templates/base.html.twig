@@ -23,7 +23,7 @@
 				<a href="{{ path('homepage') }}">Guestbook</a>
 			</h1>
 				<ul>
-					{% for confrence in confrences ?? []%}
+					{% for conference in conferences %}
 						<li>
 							<a href="{{ path('conference', { id: conference.id }) }}">{{ conference }}</a>
 						</li>
