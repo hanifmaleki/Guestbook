@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ConferenceController extends AbstractController
 {
-    #[Route('/', name: 'app_conference')]
+    #[Route('/', name: 'homepage')]
     public function index(Conference $conference, ConferenceRepository $conferenceRepository): Response
     {
         return $this->render('conference/index.html.twig', [
@@ -20,12 +20,23 @@ class ConferenceController extends AbstractController
         ]);
     }
 
-    #[Route('/conference/{id}', name: 'conference')]
-    public function show(Request $request, Conference $conference, CommentRepository $commentRepository): Response
+    /* #[Route('/homepage', name: 'homepage')]
+    public function index2(Conference $conference, ConferenceRepository $conferenceRepository): Response
     {
-        $offset = max(0, $request->query->getInt('offset',0));
+        return $this->index($conference, $conferenceRepository);
+    } */
+
+    #[Route('/conference/{id}', name: 'conference')]
+    public function show(
+        Request $request,
+        Conference $conference,
+        CommentRepository $commentRepository,
+        ConferenceRepository $conferenceRepository
+    ): Response {
+        $offset = max(0, $request->query->getInt('offset', 0));
         $paginator = $commentRepository->getCommentPaginator($conference, $offset);
         return $this->render('conference/show.html.twig', [
+            'conferences' => $conferenceRepository->findAll(),
             'conference' => $conference,
             'comments' => $paginator,
             'previous' => $offset - CommentRepository::PAGINATOR_PER_PAGE,
